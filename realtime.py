@@ -16,8 +16,27 @@ chunk_stride = chunk_size[1] * 960 # 600ms
 
 cache = {}
 total_chunk_num = int(len((speech)-1)/chunk_stride+1)
-for i in range(total_chunk_num):
-    speech_chunk = speech[i*chunk_stride:(i+1)*chunk_stride]
-    is_final = i == total_chunk_num - 1
-    res = model.generate(input=speech_chunk, cache=cache, is_final=is_final, chunk_size=chunk_size, encoder_chunk_look_back=encoder_chunk_look_back, decoder_chunk_look_back=decoder_chunk_look_back)
-    print(res)
+print(f"total_chunk_num: {total_chunk_num}")
+
+results = []  # 新增：用于保存所有识别结果
+with open('result.txt', 'w', encoding='utf-8') as f:  # 打开文件用于实时写入
+    for i in range(total_chunk_num):
+        speech_chunk = speech[i*chunk_stride:(i+1)*chunk_stride]
+        is_final = i == total_chunk_num - 1
+        res = model.generate(input=speech_chunk, cache=cache, is_final=is_final, chunk_size=chunk_size, encoder_chunk_look_back=encoder_chunk_look_back, decoder_chunk_look_back=decoder_chunk_look_back)
+        print(res)
+        # 新增：将识别结果拼接到results，并实时写入文件
+        if isinstance(res, list):
+            for r in res:
+                if isinstance(r, dict) and 'text' in r:
+                    text = r['text']
+                else:
+                    text = str(r)
+                results.append(text)
+                f.write(text)
+                f.flush()
+        else:
+            text = str(res)
+            results.append(text)
+            f.write(text)
+            f.flush()
