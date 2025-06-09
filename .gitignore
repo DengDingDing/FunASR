@@ -28,3 +28,12 @@ modelscope_models
 examples/aishell/llm_asr_nar/*
 *egg-info
 env/
+*.mp3
+*.wav
+*.m4a
+*.flac
+*.ogg
+*.opus
+*.aac
+*.wma
+*.webm
